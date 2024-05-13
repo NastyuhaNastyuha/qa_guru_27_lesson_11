@@ -10,22 +10,22 @@ import static com.codeborne.selenide.Selectors.byText;
 import static com.codeborne.selenide.Selenide.*;
 
 public class RegistrationPage {
-    private SelenideElement firstNameInput = $("#firstName"),
-        lastNameInput = $("#lastName"),
-        userEmailInput = $("#userEmail"),
-        genderWrapper = $("#genterWrapper"),
-        userNumberInput = $("#userNumber"),
-        birthDateInput = $("#dateOfBirthInput"),
-        subjectsInput = $("#subjectsInput"),
-        hobbiesWrapper = $("#hobbiesWrapper"),
-        fileInput = $("#uploadPicture"),
-        currentAddressInput = $("#currentAddress"),
-        stateAndCityWrapper = $("#stateCity-wrapper"),
-        stateInput = $("#state"),
-        cityInput = $("#city"),
-        submitButton = $("#submit"),
-        closeModalButton = $("#closeLargeModal"),
-        formHeader = $(".practice-form-wrapper");
+    private final SelenideElement firstNameInput = $("#firstName");
+    private final SelenideElement lastNameInput = $("#lastName");
+    private final SelenideElement userEmailInput = $("#userEmail");
+    private final SelenideElement genderWrapper = $("#genterWrapper");
+    private final SelenideElement userNumberInput = $("#userNumber");
+    private final SelenideElement birthDateInput = $("#dateOfBirthInput");
+    private final SelenideElement subjectsInput = $("#subjectsInput");
+    private final SelenideElement hobbiesWrapper = $("#hobbiesWrapper");
+    private final SelenideElement fileInput = $("#uploadPicture");
+    private final SelenideElement currentAddressInput = $("#currentAddress");
+    private final SelenideElement stateAndCityWrapper = $("#stateCity-wrapper");
+    private final SelenideElement stateInput = $("#state");
+    private final SelenideElement cityInput = $("#city");
+    private final SelenideElement submitButton = $("#submit");
+    private final SelenideElement closeModalButton = $("#closeLargeModal");
+    private final SelenideElement formHeader = $(".practice-form-wrapper");
 
     public RegistrationPage openPage() {
         open("/automation-practice-form");
@@ -66,17 +66,13 @@ public class RegistrationPage {
         return this;
     }
 
-    public RegistrationPage setSubjects(String[] args) {
-        for(int i = 0; i < args.length; i++) {
-            subjectsInput.setValue(args[i]).pressEnter();
-        }
+    public RegistrationPage setSubjects(String subject) {
+        subjectsInput.setValue(subject).pressEnter();
         return this;
     }
 
-    public RegistrationPage setHobbies(String[] args) {
-        for (int i = 0; i < args.length; i++) {
-            hobbiesWrapper.$(byText(args[i])).click();
-        }
+    public RegistrationPage setHobbies(String hobbie) {
+        hobbiesWrapper.$(byText(hobbie)).click();
         return this;
     }
 
