@@ -1,19 +1,34 @@
 package tests;
 
 import com.github.javafaker.Faker;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.*;
 import pages.RegistrationPage;
 import utils.RandomDate;
 import utils.RandomStateAndCity;
 
+import java.util.*;
+import java.util.stream.Stream;
+
 import static utils.RandomUtils.*;
 
-public class PracticeFormWithPageObjectsTests extends TestBase {
 
+
+public class PracticeFormWithPageObjectsTests extends TestBase {
     RegistrationPage registrationPage = new RegistrationPage();
 
-    @Test
-    void successfulFillFormTest() {
+    @CsvSource(value = {
+            "file.png, 1, 1",
+            "file.pdf, 3, 2",
+            "file.JPG, 7, 3"
+    })
+
+    @ParameterizedTest(name = "При полном заполнении формы с файлом {0}, количеством предметов - {1}, количеством хобби - {2} происходит успешная регистрация")
+    @Tag("REGRESSION")
+    @Tag("CRITICAL")
+    void successfulFillFormTest(String file, int numberOfSubjects, int numberOfHobbies) {
         Faker faker = new Faker();
         RandomDate randomDate = new RandomDate();
         randomDate.getRandomBirthDate();
@@ -26,12 +41,11 @@ public class PracticeFormWithPageObjectsTests extends TestBase {
         String address = faker.address().fullAddress();
         String gender = getRandomGender();
         String phoneNumber = getRandomNumberString(10);
-        String file = "file.png";
         String day = randomDate.day;
         String month = randomDate.month;
         String year = randomDate.year;
-        String subjects = getRandomSubject();
-        String hobbies = getRandomHobbie();
+        String[] subjects = getRandomSubject(numberOfSubjects);
+        String[] hobbies = getRandomHobbies(numberOfHobbies);
         String state = randomStateAndCity.state;
         String city = randomStateAndCity.city;
 
@@ -55,23 +69,29 @@ public class PracticeFormWithPageObjectsTests extends TestBase {
                         .checkTableResult("Gender", gender)
                         .checkTableResult("Mobile", phoneNumber)
                         .checkTableResult("Date of Birth", day + " " + month + "," + year)
-                        .checkTableResult("Subjects", subjects)
-                        .checkTableResult("Hobbies", hobbies)
+                        .checkTableResult("Subjects", Arrays.toString(subjects)
+                                .replace("[", "")
+                                .replace("]", ""))
+                        .checkTableResult("Hobbies", Arrays.toString(hobbies)
+                                .replace("[", "")
+                                .replace("]", ""))
                         .checkTableResult("Picture", file)
                         .checkTableResult("Address", address)
                         .checkTableResult("State and City", state + " " + city)
                         .closeResultsTable();
     }
 
-    @Test
-    void partialFillFormTest() {
+        @CsvFileSource(resources = "/partialFillFormTest.csv")
+        @Tag("REGRESSION")
+        @Tag("BLOCKER")
+        @ParameterizedTest(name = "При частичном заполнении формы с возрастом {0} и полом {1} происходит успешная регистрация")
+        void partialFillFormTest(int age, String gender) {
         Faker faker = new Faker();
         RandomDate randomDate = new RandomDate();
-        randomDate.getRandomBirthDate();
+        randomDate.getRandomBirthDateForAge(age);
 
         String firstName = faker.name().firstName();
         String lastName = faker.name().lastName();
-        String gender = getRandomGender();
         String phoneNumber = getRandomNumberString(10);
         String day = randomDate.day;
         String month = randomDate.month;
@@ -104,5 +124,27 @@ public class PracticeFormWithPageObjectsTests extends TestBase {
                 .submitForm()
 
                 .checkFormHeader();
+    }
+
+    static Stream<Arguments> inCityFieldOnlyCitiesForSelectedStateShouldBeDisplayed() {
+        RandomStateAndCity stateAndCity = new RandomStateAndCity();
+        Iterator<String> states = stateAndCity.statesAndCities.keySet().iterator();
+        String state;
+        return Stream.of(
+                Arguments.of(state = states.next(), stateAndCity.statesAndCities.get(state)),
+                Arguments.of(state = states.next(), stateAndCity.statesAndCities.get(state)),
+                Arguments.of(state = states.next(), stateAndCity.statesAndCities.get(state)),
+                Arguments.of(state = states.next(), stateAndCity.statesAndCities.get(state))
+        );
+    }
+
+    @MethodSource
+    @Tag("REGRESSION")
+    @Tag("MEDIUM")
+    @ParameterizedTest(name = "При выборе штата {0} в поле Город должны отображаться города выбранного штата")
+    void inCityFieldOnlyCitiesForSelectedStateShouldBeDisplayed(String state, String[] cities) {
+        registrationPage.openPage()
+                .setState(state)
+                .checkField(cities);
     }
 }

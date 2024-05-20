@@ -3,7 +3,6 @@ package pages;
 import com.codeborne.selenide.SelenideElement;
 import pages.components.CalendarComponent;
 import pages.components.TableResultsComponent;
-
 import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selectors.byText;
@@ -26,6 +25,7 @@ public class RegistrationPage {
     private final SelenideElement submitButton = $("#submit");
     private final SelenideElement closeModalButton = $("#closeLargeModal");
     private final SelenideElement formHeader = $(".practice-form-wrapper");
+    private final SelenideElement citiesDropdown = $(".css-26l3qy-menu");
 
     public RegistrationPage openPage() {
         open("/automation-practice-form");
@@ -66,13 +66,20 @@ public class RegistrationPage {
         return this;
     }
 
-    public RegistrationPage setSubjects(String subject) {
-        subjectsInput.setValue(subject).pressEnter();
+    public RegistrationPage setSubjects(String[] subjects) {
+        //String[] subjectsArray = (String[]) subjects.toArray();
+        for (String subject : subjects) {
+            subjectsInput.setValue(subject).pressEnter();
+        }
+        //subjectsInput.setValue(subjects).pressEnter();
         return this;
     }
 
-    public RegistrationPage setHobbies(String hobbie) {
-        hobbiesWrapper.$(byText(hobbie)).click();
+    public RegistrationPage setHobbies(String[] hobbies) {
+        for (String hobbie : hobbies) {
+            hobbiesWrapper.$(byText(hobbie)).click();
+        }
+        //hobbiesWrapper.$(byText(hobbie)).click();
         return this;
     }
 
@@ -115,6 +122,14 @@ public class RegistrationPage {
 
     public RegistrationPage checkFormHeader() {
         formHeader.shouldBe(visible);
+        return this;
+    }
+
+    public RegistrationPage checkField(String[] cities) {
+        cityInput.click();
+        for (String city : cities) {
+            citiesDropdown.shouldHave(text(city));
+        }
         return this;
     }
 }
