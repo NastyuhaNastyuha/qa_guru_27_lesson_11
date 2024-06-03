@@ -28,6 +28,7 @@ dependencies {
             "org.slf4j:slf4j-simple:2.0.7",
             "com.github.javafaker:javafaker:1.0.2",
             "io.github.bonigarcia:webdrivermanager:5.8.0",
+            "io.qameta.allure:allure-selenide:2.27.0"
     )
 }
 
@@ -52,4 +53,10 @@ task demoqa_test(type: Test) {
     useJUnitPlatform {
         includeTags("demoqa")
     }
+
+task textbox_test(type: Test) {
+    useJUnitPlatform {
+        includeTags("textbox")
+    }
+}
 }

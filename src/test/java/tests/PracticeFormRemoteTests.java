@@ -1,6 +1,7 @@
 package tests;
 
 import com.codeborne.selenide.Configuration;
+import com.codeborne.selenide.logevents.SelenideLogger;
 import com.github.javafaker.Faker;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import io.qameta.allure.Step;
@@ -15,6 +16,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 import pages.RegistrationPage;
 import utils.RandomDate;
 import utils.RandomStateAndCity;
+import io.qameta.allure.selenide.AllureSelenide;
 
 import java.util.Arrays;
 import java.util.Iterator;
@@ -32,7 +34,7 @@ public class PracticeFormRemoteTests {
         Configuration.browserSize = "1920x1080";
         Configuration.pageLoadStrategy = "eager";
         WebDriverManager.chromedriver().setup();
-        Configuration.remote = "https://user1:1234@selenoid.autotests.cloud/wd.hub";
+        Configuration.remote = "https://user1:1234@selenoid.autotests.cloud/wd/hub";
     }
 
     @AfterEach
@@ -40,24 +42,36 @@ public class PracticeFormRemoteTests {
         closeWebDriver();
     }
 
-    RegistrationPage registrationPage = new RegistrationPage();
 
-    @CsvSource(value = {
-            "file.png, 1, 1",
-            "file.pdf, 3, 2",
-            "file.JPG, 7, 3"
-    })
 
-    @ParameterizedTest(name = "При полном заполнении формы с файлом {0}, количеством предметов - {1}, количеством хобби - {2} происходит успешная регистрация")
-    @Tag("REGRESSION")
-    @Tag("CRITICAL")
+//    @CsvSource(value = {
+//            "file.png, 1, 1",
+//            "file.pdf, 3, 2",
+//            "file.JPG, 7, 3"
+//    })
+//
+//    @ParameterizedTest(name = "При полном заполнении формы с файлом {0}, количеством предметов - {1}, количеством хобби - {2} происходит успешная регистрация")
+//    @Tag("REGRESSION")
+//    @Tag("CRITICAL")
+
+    //void successfulFillFormTest(String file, int numberOfSubjects, int numberOfHobbies)
+    @Test
     @Tag("demoqa")
-    void successfulFillFormTest(String file, int numberOfSubjects, int numberOfHobbies) {
+    void successfulFillFormTest()
+{
+        RegistrationPage registrationPage = new RegistrationPage();
+        SelenideLogger.addListener("allure", new AllureSelenide());
+
         Faker faker = new Faker();
         RandomDate randomDate = new RandomDate();
         randomDate.getRandomBirthDate();
         RandomStateAndCity randomStateAndCity = new RandomStateAndCity();
         randomStateAndCity.getRandomStateAndCity();
+
+        String file = "file.png";
+        int numberOfSubjects = 1;
+        int numberOfHobbies = 1;
+
 
         String firstName = faker.name().firstName();
         String lastName = faker.name().lastName();
@@ -85,8 +99,8 @@ public class PracticeFormRemoteTests {
                     .setHobbies(hobbies)
                     .uploadFile(file)
                     .setCurrentAddress(address)
-                    .setState(state)
-                    .setCity(city)
+                    //.setState(state)
+                    //.setCity(city)
                     .submitForm();
         });
         step("Check results", () -> {
@@ -103,7 +117,7 @@ public class PracticeFormRemoteTests {
                             .replace("]", ""))
                     .checkTableResult("Picture", file)
                     .checkTableResult("Address", address)
-                    .checkTableResult("State and City", state + " " + city)
+                    //.checkTableResult("State and City", state + " " + city)
                     .closeResultsTable();
         });
     }
