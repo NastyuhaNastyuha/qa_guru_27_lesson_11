@@ -1,8 +1,10 @@
 package tests;
 
 import com.codeborne.selenide.Configuration;
+import com.codeborne.selenide.logevents.SelenideLogger;
 import com.github.javafaker.Faker;
 import io.github.bonigarcia.wdm.WebDriverManager;
+import io.qameta.allure.selenide.AllureSelenide;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
@@ -32,6 +34,8 @@ public class TextBoxRemoteTests {
     @Test
     @Tag("textbox")
     void fillFormTest() {
+        SelenideLogger.addListener("allure", new AllureSelenide());
+
         Faker faker = new Faker();
         String name = faker.name().fullName();
         String email = faker.internet().emailAddress();
