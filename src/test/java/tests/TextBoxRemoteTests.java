@@ -28,6 +28,8 @@ public class TextBoxRemoteTests {
     @AfterEach
     void afterEach() {
         Attach.screenshotAs("Last screenshot");
+        Attach.pageSource();
+        Attach.browserConsoleLogs();
         closeWebDriver();
     }
 
