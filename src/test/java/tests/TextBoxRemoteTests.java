@@ -40,7 +40,7 @@ public class TextBoxRemoteTests {
         Attach.screenshotAs("Last screenshot");
         Attach.pageSource();
         Attach.browserConsoleLogs();
-
+        Attach.addVideo();
         closeWebDriver();
     }
 
