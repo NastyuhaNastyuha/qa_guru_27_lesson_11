@@ -3,6 +3,7 @@ package tests;
 import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.logevents.SelenideLogger;
 import com.github.javafaker.Faker;
+import helpers.Attach;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import io.qameta.allure.selenide.AllureSelenide;
 import org.junit.jupiter.api.AfterEach;
@@ -26,6 +27,7 @@ public class TextBoxRemoteTests {
 
     @AfterEach
     void afterEach() {
+        Attach.screenshotAs("Last screenshot");
         closeWebDriver();
     }
 
