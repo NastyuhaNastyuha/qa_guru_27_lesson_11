@@ -1,5 +1,6 @@
 package tests;
 
+import com.codeborne.selenide.logevents.SelenideLogger;
 import com.github.javafaker.Faker;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -11,11 +12,15 @@ import org.junit.jupiter.params.provider.MethodSource;
 import pages.RegistrationPage;
 import utils.RandomDate;
 import utils.RandomStateAndCity;
+import io.qameta.allure.selenide.AllureSelenide;
+
+
 
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.stream.Stream;
 
+import static io.qameta.allure.Allure.step;
 import static utils.RandomUtils.*;
 
 
@@ -33,6 +38,8 @@ public class PracticeFormRemoteTests extends TestBase {
     @Tag("CRITICAL")
     @Tag("demoqa1")
     void successfulFillFormTest(String file, int numberOfSubjects, int numberOfHobbies) {
+        SelenideLogger.addListener("allure", new AllureSelenide());
+
         Faker faker = new Faker();
         RandomDate randomDate = new RandomDate();
         randomDate.getRandomBirthDate();
@@ -53,36 +60,43 @@ public class PracticeFormRemoteTests extends TestBase {
         String state = randomStateAndCity.state;
         String city = randomStateAndCity.city;
 
-        registrationPage.openPage()
-                        .setFirstName(firstName)
-                        .setLastName(lastName)
-                        .setUserEmail(email)
-                        .setUserGender(gender)
-                        .setUserNumber(phoneNumber)
-                        .setBirthDate(day, month, year)
-                        .setSubjects(subjects)
-                        .setHobbies(hobbies)
-                        .uploadFile(file)
-                        .setCurrentAddress(address)
-                        .setState(state)
-                        .setCity(city)
-                        .submitForm()
+        step("Открыть страницу формы", () -> {
+            registrationPage.openPage();
+        });
 
-                        .checkTableResult("Student Name", firstName + " " + lastName)
-                        .checkTableResult("Student Email", email)
-                        .checkTableResult("Gender", gender)
-                        .checkTableResult("Mobile", phoneNumber)
-                        .checkTableResult("Date of Birth", day + " " + month + "," + year)
-                        .checkTableResult("Subjects", Arrays.toString(subjects)
-                                .replace("[", "")
-                                .replace("]", ""))
-                        .checkTableResult("Hobbies", Arrays.toString(hobbies)
-                                .replace("[", "")
-                                .replace("]", ""))
-                        .checkTableResult("Picture", file)
-                        .checkTableResult("Address", address)
-                        .checkTableResult("State and City", state + " " + city)
-                        .closeResultsTable();
+        step("Заполнить поля формы", () -> {
+            registrationPage.setFirstName(firstName)
+                    .setLastName(lastName)
+                    .setUserEmail(email)
+                    .setUserGender(gender)
+                    .setUserNumber(phoneNumber)
+                    .setBirthDate(day, month, year)
+                    .setSubjects(subjects)
+                    .setHobbies(hobbies)
+                    .uploadFile(file)
+                    .setCurrentAddress(address)
+                    .setState(state)
+                    .setCity(city)
+                    .submitForm();
+        });
+
+        step("Проверить результат отправки формы", () -> {
+            registrationPage.checkTableResult("Student Name", firstName + " " + lastName)
+                    .checkTableResult("Student Email", email)
+                    .checkTableResult("Gender", gender)
+                    .checkTableResult("Mobile", phoneNumber)
+                    .checkTableResult("Date of Birth", day + " " + month + "," + year)
+                    .checkTableResult("Subjects", Arrays.toString(subjects)
+                            .replace("[", "")
+                            .replace("]", ""))
+                    .checkTableResult("Hobbies", Arrays.toString(hobbies)
+                            .replace("[", "")
+                            .replace("]", ""))
+                    .checkTableResult("Picture", file)
+                    .checkTableResult("Address", address)
+                    .checkTableResult("State and City", state + " " + city)
+                    .closeResultsTable();
+        });
     }
 
         @CsvFileSource(resources = "/partialFillFormTest.csv")
