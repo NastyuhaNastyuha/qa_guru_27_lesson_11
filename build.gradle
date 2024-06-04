@@ -12,6 +12,7 @@ allure {
         version.set("2.27.0")
     }
     adapter {
+        aspectjVersion.set("1.9.8")
         aspectjWeaver.set(true)
         frameworks {
             junit5 {
@@ -51,7 +52,7 @@ task simple_test(type: Test) {
 
 task demoqa_test(type: Test) {
     useJUnitPlatform {
-        includeTags("demoqa")
+        includeTags("demoqa1")
     }
 
 task textbox_test(type: Test) {
