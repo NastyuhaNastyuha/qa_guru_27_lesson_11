@@ -30,11 +30,15 @@ public class TestBase {
     }
 
     @AfterEach
-    void afterEach() {
+    void addAttachments() {
         Attach.screenshotAs("Last screenshot");
         Attach.pageSource();
         Attach.browserConsoleLogs();
         Attach.addVideo();
+    }
+
+    @AfterEach
+    void close() {
         closeWebDriver();
     }
 }
