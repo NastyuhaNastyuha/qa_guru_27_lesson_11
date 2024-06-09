@@ -34,7 +34,7 @@ dependencies {
 }
 
 tasks.withType(Test) {
-    systemProperties(getProperties())
+    systemProperties(System.getProperties())
 
     useJUnitPlatform()
 
